@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Title</title>
+		<link rel="stylesheet" href="./js/Element/index.css" />
+		<link rel="stylesheet" href="css/class.css" />
+		<style></style>
+	</head>
+	<body>
+		<div id="app">
+			<div style="height: 800px;">
+				<el-table
+					:header-cell-class-name="headerRowClassName"
+					:data="tableData"
+					stripe
+					border
+					height="calc(100% - 50px)"
+					style="width: 100%; height: calc(100% - 50px);"
+				>
+					<el-table-column
+						prop="scroll_demand_bst_number"
+						label="逻辑站规划编号"
+						width="180"
+					>
+						<template slot="header" slot-scope="scope">
+							<span
+								>逻辑站规划编号<i
+									class="el-icon-question el-icon--right"
+									name="逻辑站规划编号"
+								></i
+							></span>
+						</template>
+					</el-table-column>
+					<el-table-column
+						prop="city"
+						label="市/地区/州/盟"
+						width="130"
+					>
+						<template slot="header" slot-scope="scope">
+							<span
+								>市/地区/州/盟<i
+									class="el-icon-question el-icon--right"
+								></i
+							></span>
+						</template>
+					</el-table-column>
+					<el-table-column
+						prop="physical_address_name"
+						label="站址名称"
+						width="150"
+					>
+					</el-table-column>
+					<el-table-column
+						prop="address_longitude"
+						width="130"
+						label="站址经度1"
+					>
+					</el-table-column>
+				</el-table>
+			</div>
+		</div>
+
+		<script src="js/vue.js"></script>
+		<script src="js/Element/index.js"></script>
+		<script src="js/jquery-1.12.3.js"></script>
+		<script type="module">
+			import ShowMetaWord from "./js/components/ShowMetaWord.js";
+			window.$ShowMetaWord = new ShowMetaWord({
+				el: ".el-icon-question",
+			});
+		</script>
+
+		<script !src="">
+			$(function () {
+				new Vue({
+					el: "#app",
+					data() {
+						return {
+							tableData: [],
+						};
+					},
+					mounted() {
+						for (let index = 0; index < 10; index++) {
+							this.tableData.push({
+								scroll_demand_bst_number: "ZS2020042800060003",
+								city: "中山",
+								physical_address_name: "中山火炬格兰特",
+								address_longitude: 113.44596,
+								address_latitude: 22.56332,
+								station_address_type: "室外宏基站",
+								system_type: "5G",
+								band: "3.5G",
+								distance: 133.05,
+								date: 202004,
+								province: "广东",
+								province_number: "844",
+								city_hload: "中山",
+								city_id: "760",
+								base_statn_id: "505976",
+								cell_id: "50",
+								cell_name: "ZSHJ_FE_D505976_C",
+								coverage_type: "室外",
+								down_band: "1.8GHz",
+								factory: "爱立信",
+								hloadstation_longitude: 113.444774,
+								hloadstation_latitude: 22.562838,
+								up_prb_userate: "17.49%",
+								dw_prb_userate: "82.80%",
+								rrc_users: 178.1,
+								flow_up: "0.45GB",
+								flow_down: "9.23GB",
+								user_cnt: 300.4,
+							});
+						}
+
+						this.dataPretreatment();
+
+						setTimeout(() => {
+							$ShowMetaWord.init();
+							// });
+						}, 1000);
+					},
+					methods: {
+						headerRowClassName({
+							row,
+							column,
+							rowIndex,
+							columnIndex,
+						}) {
+							// console.log(row, column, rowIndex, columnIndex);
+							if (columnIndex === 0 || columnIndex === 3) {
+								return "metaWordClassName";
+							}
+						},
+						/*
+						 * 前行row、当前列column、当前行号rowIndex、当前列号columnIndex
+						 * 该函数可以返回一个包含两个元素的数组，第一个元素代表rowspan，第二个元素代表colspan。 也可以返回一个键名为rowspan和colspan的对象
+						 * */
+						objectSpanMethod({
+							row,
+							column,
+							rowIndex,
+							columnIndex,
+						}) {
+							if (columnIndex < 9) {
+								//第一列
+								const _row = this.mergingRows[rowIndex];
+								const _col = _row > 0 ? 1 : 0;
+								return {
+									rowspan: _row,
+									colspan: _col,
+								};
+							}
+						},
+						dataPretreatment() {
+							//表格数据列合并预处理,生成一个与行数相同的数组记录每一行设置的合并数
+							this.mergingRows = [];
+							this.mergingPos = 0;
+
+							for (let i = 0; i < this.tableData.length; i++) {
+								// tabledata 表格数据源
+								if (i === 0) {
+									this.mergingRows.push(1);
+									this.mergingPos = 0;
+								} else {
+									//哪些数据是要合并的 合并的条件是什么
+									if (
+										this.tableData[i]
+											.scroll_demand_bst_number ==
+											this.tableData[i - 1]
+												.scroll_demand_bst_number &&
+										this.tableData[i].city ==
+											this.tableData[i - 1].city &&
+										this.tableData[i]
+											.physical_address_name ==
+											this.tableData[i - 1]
+												.physical_address_name &&
+										this.tableData[i].address_longitude ==
+											this.tableData[i - 1]
+												.address_longitude &&
+										this.tableData[i].address_latitude ==
+											this.tableData[i - 1]
+												.address_latitude &&
+										this.tableData[i].system_type ==
+											this.tableData[i - 1].system_type &&
+										this.tableData[i].band ==
+											this.tableData[i - 1].band
+									) {
+										this.mergingRows[this.mergingPos] += 1;
+										this.mergingRows.push(0);
+									} else {
+										this.mergingRows.push(1);
+										this.mergingPos = i;
+									}
+								}
+							}
+						},
+					},
+				});
+
+				function tt() {
+					console.log(1);
+				}
+
+				function _debounce(fn, delay) {
+					var delay = delay || 200;
+					var timer;
+					return function () {
+						var th = this;
+						var args = arguments;
+						if (timer) {
+							clearTimeout(timer);
+						}
+						timer = setTimeout(function () {
+							timer = null;
+							fn.apply(th, args);
+						}, delay);
+					};
+				}
+			});
+		</script>
+	</body>
+</html>

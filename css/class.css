@@ -1,0 +1,45 @@
+.el-icon-question:hover {
+    cursor: pointer;
+}
+
+#carBox metaword{
+    padding: 0 5px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+#carBox metaword:hover{
+    color: #409eff;
+}
+
+#carBox {
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    position: relative;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
+
+#carBox:after,#carBox:before {
+    border:solid transparent;
+    content:' ';
+    height: 0;
+    bottom: 100%;
+    position: absolute;
+    width: 0;
+}
+
+#carBox:after {
+    border-width: 10px;
+    border-bottom-color: #fff;
+
+    top: -20px;
+    left: 11px;
+}
+
+#carBox:before {
+    border-width: 12px;
+    border-bottom-color: #000;
+    top: -25px;
+    left: 9px;
+}
