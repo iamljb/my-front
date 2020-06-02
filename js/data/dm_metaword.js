@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-05-28 09:25:28
- * @LastEditTime: 2020-06-01 11:19:14
+ * @LastEditTime: 2020-06-02 09:16:34
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \element-test\js\data\dm_metaword.js
@@ -28,6 +28,13 @@ let tipData = [
 		id: 3,
 		name: "逻辑站规划编号",
 		abbr: "逻辑站规划编号",
+		type: null,
+		desc: `选取小区满足集团繁忙标准的天，计算这些天中最忙小时上行PRB利用率的平均值。（参见术语<metaword>RB、PRB和VRB</metaword><metaword>自忙时上行PRB平均利用率</metaword>）`,
+	},
+	{
+		id: 4,
+		name: "市/地区/州/盟",
+		abbr: "市/地区/州/盟",
 		type: null,
 		desc: `选取小区满足集团繁忙标准的天，计算这些天中最忙小时上行PRB利用率的平均值。（参见术语<metaword>RB、PRB和VRB</metaword><metaword>自忙时上行PRB平均利用率</metaword>）`,
 	},

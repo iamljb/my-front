@@ -1,6 +1,7 @@
 // "use strict";
 
 import tipData from "../data/dm_metaword.js";
+import {createElement, render} from "../vdom/index.js"
 
 
 export default class ShowMetaWord {
@@ -9,25 +10,31 @@ export default class ShowMetaWord {
             // 提示框挂载节点
             el: "",
             // 记录打开过的术语提示框
-            termHis: []
+            termHis: [],
+            currentIndex: 0
         };
         this.ops = Object.assign({}, ops, opt);
+        console.log(tipData);
+        console.log(createElement);
+        console.log(render);
+
     }
+
     /**
      * 获取实例（单例模式）
      */
     static getInstance() {
-        if (!ShowMetaWord.instance) {
-            ShowMetaWord.instance = new ShowMetaWord();
-            return ShowMetaWord.instance
+        if (ShowMetaWord.instance) {
+            return ShowMetaWord.instance;
         }
+        ShowMetaWord.instance = new ShowMetaWord();
         return ShowMetaWord.instance;
     }
 
     /**
      * 创建提示框节点元素
-     * @param {*} e 
-     * @param {*} keyContent 
+     * @param {*} e
+     * @param {*} keyContent
      */
     appendHtml(e, keyContent) {
         // let keyContent = e.target.textContent.replace(/\s+/g, "");
@@ -50,7 +57,9 @@ export default class ShowMetaWord {
         let content = `
 		<div style="padding: 10px;color: #FFF;font-size: 10px;">
         <div style="width:100%;height:100px;overflow:auto;">
-        <button id="tipBack">返回</button></button>
+        <div style="float: left"><button id="tipBack">&#60;</button></button>
+        <button id="tipGo">&#62;</button></button></div>
+        <div style="float: right"><button id="closeBtn">x</button></div>
 		<table style="float:top;width:100%;height:100%;">
         `;
         content += `<tr><td style="width:60px;">术语名称:</td><td id="termName"></td></tr>`;
@@ -71,20 +80,44 @@ export default class ShowMetaWord {
 
         let that = this;
         $("#tipBack").click(function (e) {
-            that.ops.termHis.pop();
-            that.setContent(that.ops.termHis[that.ops.termHis.length - 1]["name"], true)
+            that.ops.currentIndex --;
+
+            that.setContent(that.ops.termHis[that.ops.currentIndex]["name"], true)
+            if (that.ops.currentIndex == 0) {
+                // document.getElementById("tipBack").style.pointerEvents = "none";
+                $('#tipBack').attr('disabled',"true")
+            }else{
+                $('#tipGo').removeAttr('disabled')
+
+            }
+        })
+
+        $("#tipGo").click(function (e) {
+            that.ops.currentIndex ++;
+            that.setContent(that.ops.termHis[that.ops.currentIndex]["name"], true)
+            if (that.ops.currentIndex == that.ops.termHis.length -1) {
+                $('#tipGo').attr('disabled',"true")
+                // document.getElementById("tipBack").style.cursor = "not-allowed";
+            }else{
+                $('#tipBack').removeAttr('disabled')
+
+            }
+        })
+
+        $("#closeBtn").click(function (e) {
+            $("#carBox").hide();
         })
     }
 
     /**
      * 设置提示框内容
-     * @param {*} keyContent 
-     * @param {*} isBack 
+     * @param {*} keyContent
+     * @param {*} isBack
      */
     setContent(keyContent, isBack) {
         let tip = tipData.find(ele => ele.name == keyContent);
         if (tip) {
-            if (!isBack) {
+            if(!isBack){
                 this.ops.termHis.push(tip);
             }
             document.getElementById("termName").innerHTML = tip.name;
@@ -93,12 +126,20 @@ export default class ShowMetaWord {
             document.getElementById("termName").innerHTML = "";
             document.getElementById("termDesc").innerHTML = "";
         }
+        // $('#tipBack').removeAttr('disabled')
+        // $('#tipGo').removeAttr('disabled')
 
         let that = this;
         $("metaword").click(function (e) {
+            if (that.ops.currentIndex == 0) {
+                // document.getElementById("tipBack").style.pointerEvents = "none";
+                $('#tipBack').removeAttr('disabled')
+            }
+
             const name = e.target.textContent;
             console.log(name);
 
+            that.ops.currentIndex ++;
             that.setContent(name);
         })
     }
@@ -121,7 +162,10 @@ export default class ShowMetaWord {
     init() {
         console.log("init");
         let thas = this;
+
         $(this.ops.el).click(function (e) {
+            thas.ops.termHis = [];
+            thas.ops.currentIndex = 0;
             console.log(e);
             console.log(e.target.parentNode.textContent.replace(/\s+/g, ""));
             // console.log(e.target.textContent);
@@ -129,6 +173,8 @@ export default class ShowMetaWord {
             let keyContent = e.currentTarget.getAttribute("name");
             thas.appendHtml(e, keyContent);
             thas.setContent(keyContent);
+            $('#tipBack').attr('disabled',"true")
+            $('#tipGo').attr('disabled',"true")
         });
         // $(".metaWordClassName").mouseenter(function (e) {
         //     // console.log(e);
